@@ -50,9 +50,11 @@ muse is the one verified adapter that restores the cancelled prompt back into it
 The clear is refused before anything is sent when the recorded backend cannot deliver it.
 
 `exit` reads the composer's state before typing the exit command and requires the exact `empty` verdict; a `pending` verdict refuses by naming the pending text, and any other verdict (`unknown`, `pending-unproven`, or an unreadable read) refuses as not proven empty, matching the fail-safe contract every other consumer that can overwrite composer input follows.
-`exit` also refuses, naming the dialog as `blocked on a prompt`, when the screen shows a recognised dialog that a further Enter would answer, whether the dialog was open before the exit command was typed or the submitting Enter opened it; it sends no Escape and chooses no option, so closing the dialog is left to the operator.
+`exit` also refuses, naming the dialog as `blocked on a prompt`, when the screen shows a recognised dialog that a further Enter would answer, unless the recorded harness and dialog have a verified key-only exit in `fm_control_dialog_exit_keys`.
+That exception still requires the backend to prove the agent stopped and never selects a dialog option or falls back to typing into the modal.
 A stopped agent whose pane still shows the dialog text is not refused.
-[`fm_composer_blocking_dialog`](../bin/fm-composer-lib.sh) owns the recognised set, which today is only Claude's background-task exit picker; [its verification record](verification/runtime-backends.md#claude-background-task-exit-picker) lists the dialogs that are not covered.
+[`fm_composer_blocking_dialog`](../bin/fm-composer-lib.sh) owns the recognised set: Claude's background-task exit picker and Grok's weekly-limit picker.
+Their verification records cover [Claude's refusal](verification/runtime-backends.md#claude-background-task-exit-picker) and [Grok's native exit](verification/runtime-backends.md#grok-weekly-limit-control).
 
 **Teardown and discard are not verbs and will not become verbs.**
 `exit` stops an agent and preserves everything else.
