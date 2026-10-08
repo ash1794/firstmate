@@ -1235,3 +1235,56 @@ test_background_exit_picker_stays_pending_and_blocks_retry
 test_dialog_heading_and_footer_must_be_the_recorded_lines
 test_dialog_note_skips_the_match_when_no_sink_is_set
 test_quoted_exit_picker_text_is_not_a_dialog
+
+grok_quota_screen() {
+  printf '%s\n' \
+    '  ┃' \
+    '  ┃  You hit your weekly limit.' \
+    '  ┃' \
+    '  ┃  1 (○) Upgrade tier      Upgrade to a higher tier for more usage' \
+    '  ┃  2 (○) Buy more credits  Purchase credits to keep using Grok Build' \
+    '  ┃  3 (○) Try Again         Resubmit the last prompt once you have usage again' \
+    '  ┃' \
+    '  ┃  ↑/↓ navigate · y copy                     Enter:submit' \
+    '  ┃' \
+    '' \
+    '  Tab:next answer  │  Esc:scrollback  │  Shift+x:dismiss'
+}
+
+test_grok_quota_dialog_is_named_without_authorizing_input() {
+  local screen out sink
+  screen=$(grok_quota_screen)
+  out=$(fm_composer_blocking_dialog "$screen")
+  [ "$out" = 'Grok weekly-limit picker' ] || fail "quota picker should be named, got '$out'"
+  screen=$(grok_quota_screen | sed 's/Tab:next answer  │  Esc:scrollback  │  Shift+x:dismiss/Tab\/Space:question  │  →:expand  │  Ctrl+e:expand thinking  │  Ctrl+.:shortcuts/')
+  out=$(fm_composer_blocking_dialog "$screen")
+  [ "$out" = 'Grok weekly-limit picker' ] || fail "production navigation footer must match"
+  out=$(fm_composer_blocking_dialog $'\e[38;2;224;222;244m'"$screen"$'\e[0m')
+  [ "$out" = 'Grok weekly-limit picker' ] || fail "styled quota viewport must match"
+  sink=$(mktemp)
+  FM_COMPOSER_DIALOG_SINK=$sink
+  out=$(fm_composer_classify_screen 'styled=1' "$screen")
+  [ "$out" != empty ] || fail "quota picker must never authorize input"
+  [ "$(cat "$sink")" = 'Grok weekly-limit picker' ] || fail "classifier must note quota picker"
+  FM_TEST_PICKER_SCREEN=$screen
+  FM_TEST_PICKER_ENTERS=$(mktemp)
+  out=$(fm_composer_submit_retry_core fm_test_picker_send fm_test_picker_state win 3 0)
+  [ "$out" = unknown ] || fail "retry must stop on quota picker"
+  [ "$(wc -l < "$FM_TEST_PICKER_ENTERS" | tr -d ' ')" = 1 ] || fail "quota picker must receive no confirming Enter"
+  unset FM_COMPOSER_DIALOG_SINK
+  rm -f "$sink" "$FM_TEST_PICKER_ENTERS"
+  for screen in \
+    "$(grok_quota_screen | sed '/Buy more credits/d')" \
+    "$(grok_quota_screen | sed '/Enter:submit/d')" \
+    "$(grok_quota_screen | sed 's/weekly limit/daily limit/')" \
+    "$(grok_quota_screen)"$'\n❯ unrelated draft' \
+    "$(grok_quota_screen)"$'\n╭────╮\n│ ❯ │\n╰────╯' \
+    "$(grok_quota_screen)"$'\n$ live shell'; do
+    if fm_composer_blocking_dialog "$screen" >/dev/null; then
+      fail "incomplete or transcript quota text must not become an active dialog"
+    fi
+  done
+  pass "Grok quota picker blocks retry; incomplete and quoted screens do not authorize lifecycle keys"
+}
+
+test_grok_quota_dialog_is_named_without_authorizing_input

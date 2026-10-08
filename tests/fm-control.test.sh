@@ -137,6 +137,12 @@ case "${1:-}" in
     else
       printf '%s\n' "$payload" >> "$D/keys"
       printf '%s %s\n' "$(perl -MTime::HiRes=time -e 'printf "%.3f", time')" "$payload" >> "$D/key-times"
+      if [ "$payload" = C-q ] && [ -f "$D/grok-quota" ]; then
+        count=$(grep -c '^C-q$' "$D/keys" || true)
+        if [ "$count" -eq 2 ] && [ -z "${FM_FAKE_NEVER_DIES:-}" ]; then
+          printf zsh > "$D/command"
+        fi
+      fi
       if [ "$payload" = Escape ] && [ -f "$D/devin" ]; then
         case "$(cat "$D/devin")" in
           running) printf armed > "$D/devin" ;;
@@ -1195,3 +1201,61 @@ test_grok_interrupt_without_acknowledgement_reports_unconfirmed
 test_grok_idle_footer_does_not_confirm_cancellation
 test_secondmate_control_command_carries_no_marker
 test_fm_send_still_marks_the_same_secondmate_task
+
+grok_quota_screen() {
+  printf '%s\n' \
+    '  ┃' \
+    '  ┃  You hit your weekly limit.' \
+    '  ┃' \
+    '  ┃  1 (○) Upgrade tier      Upgrade to a higher tier for more usage' \
+    '  ┃  2 (○) Buy more credits  Purchase credits to keep using Grok Build' \
+    '  ┃  3 (○) Try Again         Resubmit the last prompt once you have usage again' \
+    '  ┃' \
+    '  ┃  ↑/↓ navigate · y copy                     Enter:submit' \
+    '  ┃' \
+    '' \
+    '  Tab:next answer  │  Esc:scrollback  │  Shift+x:dismiss'
+}
+
+test_grok_quota_exit_is_key_only_and_requires_stop_proof() {
+  local dir out rc harness
+  dir=$(new_case grok-quota)
+  add_task "$dir" t1 grok
+  alive_as "$dir" grok
+  grok_quota_screen > "$dir/fake/pane"
+  touch "$dir/fake/grok-quota"
+  printf 'preserved work\n' > "$dir/wt-t1/pending.txt"
+  out=$(run_control "$dir" t1 exit); rc=$?
+  expect_code 0 "$rc" "native quota exit should stop Grok"$'\n'"$out"
+  [ "$(cat "$dir/fake/keys")" = $'C-q\nC-q' ] || fail "quota exit must send only two Ctrl+Q keys"
+  [ ! -s "$dir/fake/literal" ] || fail "quota exit must type no text"
+  [ -f "$dir/home/state/t1.meta" ] && [ -f "$dir/wt-t1/pending.txt" ] || fail "quota exit must preserve metadata and work"
+  alive_as "$dir" grok
+  : > "$dir/fake/keys"
+  out=$(FM_FAKE_NEVER_DIES=1 run_control "$dir" t1 exit); rc=$?
+  expect_code 1 "$rc" "delivered keys without dead-agent proof must refuse"$'\n'"$out"
+  assert_contains "$out" 'exit=unconfirmed' 'failed native exit must not claim stopped'
+  [ "$(cat "$dir/fake/keys")" = $'C-q\nC-q' ] || fail "failed native exit must not repeat blindly"
+  [ ! -s "$dir/fake/literal" ] || fail "failed native exit must not fall back to typed exit"
+  for harness in grok claude; do
+    dir=$(new_case "quota-refusal-$harness")
+    add_task "$dir" t1 "$harness"
+    alive_as "$dir" "$harness"
+    if [ "$harness" = grok ]; then
+      printf '╭────────────────────────╮\n│ ❯ unrelated draft      │\n╰────────────────────────╯\n' > "$dir/fake/pane"
+    else
+      grok_quota_screen > "$dir/fake/pane"
+    fi
+    out=$(run_control "$dir" t1 exit); rc=$?
+    expect_code 1 "$rc" "draft or wrong harness must refuse"$'\n'"$out"
+    [ ! -s "$dir/fake/keys" ] && [ ! -s "$dir/fake/literal" ] || fail "draft or wrong harness must remain untouched"
+  done
+  fm_control_backend_supports_key tmux C-q || fail "tmux must deliver native quit"
+  fm_control_backend_supports_key herdr C-q || fail "Herdr must deliver native quit"
+  for harness in orca zellij cmux; do
+    fm_control_backend_supports_key "$harness" C-q && fail "$harness has no verified native quota quit"
+  done
+  pass "Grok quota exit is key-only, preserves work and drafts, and requires dead-agent proof"
+}
+
+test_grok_quota_exit_is_key_only_and_requires_stop_proof

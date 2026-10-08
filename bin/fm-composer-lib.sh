@@ -1672,9 +1672,11 @@ EOF
 }
 
 # fm_composer_blocking_dialog: name a screen whose next Enter would answer it.
-# Prints the name and returns 0 only for the recorded structure of one dialog:
-# the heading on its own line, then its selected row alone on a row, with the
-# recorded footer as the last non-blank row. A heading buried in a sentence,
+# Prints the name and returns 0 only for a recorded dialog structure.
+# Claude requires its heading, selected row, and last non-blank confirmation
+# footer. Grok requires a contiguous quota-question block with all three
+# options and its submit footer, followed only by recorded navigation furniture.
+# A heading buried in a sentence,
 # or a last line that only starts with the same words, is not that dialog.
 # The strings alone are not enough, because a diff, a note, or a test fixture
 # on the pane can quote all of them above a normal composer. A miss returns 1
@@ -1691,6 +1693,28 @@ fm_composer_blocking_dialog() {  # <screen> -> dialog name
     END { exit !(selected && last ~ /^[ \t]*Enter to confirm · Esc to cancel[ \t\r]*$/) }
   '; then
     printf '%s' 'Claude background-task exit picker'
+    return 0
+  fi
+  # Grok 1.0.46: Enter selects a billing/retry option, while Escape merely
+  # focuses scrollback. Keep this a blocking dialog, never an empty composer.
+  # A lower composer, shell, or unrecognized row invalidates the modal proof.
+  if printf '%s\n' "$screen" | fm_composer_strip_ansi | LC_ALL=C awk '
+    /^[ \t]*┃[ \t]*You hit your weekly limit\.[ \t\r]*$/ {
+      stage = 1; next
+    }
+    stage && /^[ \t]*┃[ \t\r]*$/ { next }
+    stage == 1 && /^[ \t]*┃[ \t]*1 \(○\) Upgrade tier[ \t]+Upgrade to a higher tier for more usage[ \t\r]*$/ { stage = 2; next }
+    stage == 2 && /^[ \t]*┃[ \t]*2 \(○\) Buy more credits[ \t]+Purchase credits to keep using Grok Build[ \t\r]*$/ { stage = 3; next }
+    stage == 3 && /^[ \t]*┃[ \t]*3 \(○\) Try Again[ \t]+Resubmit the last prompt once you have usage again[ \t\r]*$/ { stage = 4; next }
+    stage == 4 && /^[ \t]*┃[ \t]*↑\/↓ navigate · y copy[ \t]+Enter:submit[ \t\r]*$/ { stage = 5; next }
+    stage == 5 && /^[ \t\r]*$/ { next }
+    stage == 5 && /^[ \t]*Tab:next answer[ \t]+│[ \t]+Esc:scrollback[ \t]+│[ \t]+Shift\+x:dismiss[ \t\r]*$/ { stage = 6; next }
+    stage == 5 && /^[ \t]*Tab\/Space:question[ \t]+│[ \t]+→:expand[ \t]+│[ \t]+Ctrl\+e:expand thinking[ \t]+│[ \t]+Ctrl\+\.:shortcuts[ \t\r]*$/ { stage = 6; next }
+    stage == 6 && /^[ \t\r]*$/ { next }
+    stage { stage = 0 }
+    END { exit !(stage == 5 || stage == 6) }
+  '; then
+    printf '%s' 'Grok weekly-limit picker'
     return 0
   fi
   return 1

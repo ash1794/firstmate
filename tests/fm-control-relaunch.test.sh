@@ -43,9 +43,10 @@ TASK_TMPS=()
 relaunch_cleanup() {
   local d
   for d in "${TASK_TMPS[@]:-}"; do
-    [ -n "$d" ] && rm -rf "$d"
+    [ -n "$d" ] && fm_test_remove_tree "$d"
   done
-  rm -rf "$TMP_ROOT"
+  fm_test_remove_tree "$TMP_ROOT"
+  fm_test_cleanup
 }
 trap relaunch_cleanup EXIT
 
@@ -88,6 +89,12 @@ case "${1:-}" in
       esac
     else
       printf '%s\n' "$payload" >> "$D/keys"
+      if [ "$payload" = C-q ] && [ -f "$D/quota-pane" ]; then
+        if [ "$(grep -c '^C-q$' "$D/keys" || true)" -eq 2 ]; then
+          printf zsh > "$D/command"
+          rm "$D/quota-pane"
+        fi
+      fi
       case "$payload" in
         'export GOTMPDIR='*)
           if [ -n "${FM_FAKE_TRACE_PREPARE:-}" ]; then
@@ -117,7 +124,9 @@ case "${1:-}" in
     printf 'fakepane\n'; exit 0 ;;
   capture-pane)
     [ -z "${FM_FAKE_COMPOSER_READ_FAIL:-}" ] || exit 1
-    if [ -s "$D/composer" ]; then
+    if [ -f "$D/quota-pane" ]; then
+      cat "$D/quota-pane"
+    elif [ -s "$D/composer" ]; then
       printf '╭────╮\n│ %s  │\n╰────╯\n' "$(cat "$D/composer")"
     else
       printf '╭────╮\n│    │\n╰────╯\n'
@@ -2128,7 +2137,10 @@ test_herdr_relaunch_resumes_only_the_registered_pi_session() {
     }
     dir=$HERDR_CASE_DIR
     rm -f "$dir/fake/herdr-stopped"
-    sed -i 's/^harness=claude$/harness=pi/' "$dir/home/state/resume-$registered.meta"
+    sed 's/^harness=claude$/harness=pi/' "$dir/home/state/resume-$registered.meta" > "$dir/meta.next"
+    mv "$dir/meta.next" "$dir/home/state/resume-$registered.meta"
+    printf '#!/usr/bin/env bash\nprintf "Options: --tui-mode\\n"\n' > "$dir/fakebin/pi"
+    chmod +x "$dir/fakebin/pi"
     # Keep the pane's status authority registered to an existing Pi session,
     # while process-info proves that its previous agent has exited.
     printf '{"result":{"agent":{"agent":"%s","agent_status":"idle","agent_session":{"kind":"path","value":"/tmp/pi-bound-session.jsonl"}}}}\n' \
@@ -2512,3 +2524,40 @@ test_herdr_reclaim_of_a_secondmate_names_its_own_owner
 test_herdr_rebind_failure_from_a_plain_shell_names_the_real_cause
 test_relaunch_reverifies_an_already_in_flight_item_instead_of_rewriting_it
 test_relaunch_moves_a_drifted_item_back_in_flight
+
+grok_quota_screen() {
+  printf '%s\n' \
+    '  ┃' \
+    '  ┃  You hit your weekly limit.' \
+    '  ┃' \
+    '  ┃  1 (○) Upgrade tier      Upgrade to a higher tier for more usage' \
+    '  ┃  2 (○) Buy more credits  Purchase credits to keep using Grok Build' \
+    '  ┃  3 (○) Try Again         Resubmit the last prompt once you have usage again' \
+    '  ┃' \
+    '  ┃  ↑/↓ navigate · y copy                     Enter:submit' \
+    '  ┃' \
+    '' \
+    '  Tab:next answer  │  Esc:scrollback  │  Shift+x:dismiss'
+}
+
+test_grok_quota_relaunch_preserves_transaction_and_work() {
+  local dir out rc
+  dir=$(new_case quota-relaunch quota)
+  add_ship_task "$dir" quota grok
+  printf grok > "$dir/fake/command"
+  printf codex > "$dir/fake/becomes"
+  grok_quota_screen > "$dir/fake/quota-pane"
+  printf 'uncommitted recovery source\n' > "$dir/wt/preserved.txt"
+  out=$(run_control "$dir" quota relaunch --harness codex --note "weekly quota exhausted; resume preserved work"); rc=$?
+  expect_code 0 "$rc" "quota relaunch should complete transaction"$'\n'"$out"
+  assert_contains "$out" 'relaunched quota harness=codex from=grok' 'quota relaunch must prove replacement'
+  [ "$(grep -c '^C-q$' "$dir/fake/keys")" -eq 2 ] || fail "quota relaunch must deliver native exit pair"
+  assert_no_grep '/exit' "$dir/fake/literal" 'quota relaunch must not type slash exit'
+  [ "$(meta_field "$dir" quota window)" = fmses:fm-quota ] || fail "quota relaunch must preserve endpoint"
+  [ "$(meta_field "$dir" quota worktree)" = "$dir/wt" ] || fail "quota relaunch must preserve worktree"
+  [ "$(journal_field "$dir" quota phase)" = complete ] || fail "quota relaunch must complete durable journal"
+  [ "$(cat "$dir/wt/preserved.txt")" = 'uncommitted recovery source' ] || fail "quota relaunch must preserve dirty work"
+  pass "Grok quota relaunch exits natively, completes transaction, and preserves dirty work in the same endpoint"
+}
+
+test_grok_quota_relaunch_preserves_transaction_and_work

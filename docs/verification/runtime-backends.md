@@ -2491,3 +2491,29 @@ Without Firstmate's hooks, Herdr reported the question panel as `blocked`, which
 This live proof covers the watcher and queue boundary; it does not establish live daemon-consumer delivery.
 `bin/fm-test-run.sh tests/fm-daemon.test.sh` exercises that consumer routing separately with portable regressions for busy escalation and busy-bookkeeping failures in away and quiet mode.
 Repeat the hooked-worker check above before publication if watcher or task-inbox busy code changes; `bin/fm-test-run.sh tests/fm-task-inbox.test.sh` refreshes the portable ladder regressions.
+
+### Grok weekly-limit control
+
+Verified 2026-10-08 with `grok 1.0.46 (2765805b9442)` and Herdr client/server 0.9.3.
+Refresh the real quota-modal proof on both recovery-grade backends with:
+
+```sh
+FM_GROK_QUOTA_CONTROL_LIVE=1 bin/fm-test-run.sh tests/fm-grok-quota-control-live-e2e.test.sh
+```
+
+The guard requires an existing authenticated account that actually reaches the weekly-limit modal and fails naming the Grok version if that evidence is unavailable.
+Observed output, with disposable endpoint paths omitted:
+
+```text
+# Herdr client=0.9.3 server=0.9.3
+ok - grok 1.0.46 (2765805b9442) on herdr: stopped quota harness=grok backend=herdr endpoint=<disposable lab pane> worktree=<scratch project>; Grok exit=0; wall_s=3.555; endpoint and work preserved
+ok - grok 1.0.46 (2765805b9442) on tmux: stopped quota harness=grok backend=tmux endpoint=quota:fm-quota worktree=<scratch project>; Grok exit=0; wall_s=1.954; endpoint and work preserved
+FM_TEST_END 2026-10-08T11:58:06Z tests/fm-grok-quota-control-live-e2e.test.sh exit=0 duration_ms=16300 gate_skip=false
+```
+
+The real modal offered Upgrade tier, Buy more credits, and Try Again, with Enter submitting the selected option.
+The native key pair returned the foreground process to its shell with exit code zero without selecting an option.
+`bin/fm-composer-lib.sh` owns the exact modal structure, and `bin/fm-control-lib.sh` owns the supported key sequence and backend capability.
+`tests/fm-composer-lib.test.sh`, `tests/fm-control.test.sh`, and `tests/fm-control-relaunch.test.sh` pin modal versus quoted-transcript discrimination, draft refusal, stop-proof failure, and transactional relaunch preservation.
+Other quota dialogs and changed modal geometry remain unsupported and refuse safely.
+Other harnesses keep their existing lifecycle mechanics; zellij, cmux, and Orca remain unable to prove an agent stopped.

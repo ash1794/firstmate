@@ -235,6 +235,17 @@ fm_control_exit_command() {  # <harness>
   esac
 }
 
+# A key-only exit from a blocking dialog, never from a draft or an unknown
+# screen. Grok 1.0.46 quits its weekly-limit picker on Ctrl+Q twice within
+# 1000ms; every other harness/dialog pairing remains unsupported.
+# The caller sends the listed keys consecutively and still proves agent death.
+fm_control_dialog_exit_keys() {  # <harness> <dialog-name>
+  case "${1-}:${2-}" in
+    'grok:Grok weekly-limit picker') printf '%s\n' C-q C-q ;;
+    *) return 1 ;;
+  esac
+}
+
 # The launch argument that makes a RELAUNCH of <harness> RESUME an exact agent
 # session instead of starting a fresh one, printed only when <registered-agent>
 # is the label that session reference belongs to; nothing otherwise.
@@ -281,6 +292,7 @@ fm_control_backend_supports_key() {  # <backend> <key>
   case "$backend" in
     tmux|herdr|zellij|cmux)
       case "$key" in Escape|Enter|C-c|C-u) return 0 ;; esac
+      case "$backend:$key" in tmux:C-q|herdr:C-q) return 0 ;; esac
       ;;
     orca)
       case "$key" in Enter|C-c) return 0 ;; esac

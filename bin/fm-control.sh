@@ -120,6 +120,8 @@
 #     classified state acts.
 #   - A composer that visibly holds pending text refuses before an exit command
 #     is typed, so existing text is preserved instead of being concatenated.
+#     A recognized Grok weekly-limit picker uses its verified Ctrl+Q sequence
+#     on tmux/Herdr without typing text or selecting any modal option.
 #
 # Environment knobs (all bounded waits, seconds):
 #   FM_CONTROL_POLL              poll interval for postcondition waits (0.5)
@@ -407,6 +409,27 @@ refuse_blocking_prompt() {  # <dialog-name>
   die "task $ID is blocked on a prompt: $1. Refusing to type Enter into it."
 }
 
+# exit_blocking_dialog: a recognized modal may have a verified native exit
+# that does not type text or confirm an option. Unsupported pairs refuse.
+# No slash-command fallback or further key retry follows an unconfirmed stop.
+exit_blocking_dialog() {  # <dialog-name>
+  local keys key state
+  keys=$(fm_control_dialog_exit_keys "$HARNESS" "$1") \
+    || refuse_blocking_prompt "$1"
+  while IFS= read -r key; do
+    fm_control_backend_supports_key "$BACKEND" "$key" \
+      || die "task $ID needs $key to exit $1, which the $BACKEND backend cannot deliver; nothing was typed"
+  done <<< "$keys"
+  while IFS= read -r key; do
+    fm_backend_send_key "$BACKEND" "$T" "$key" "$LABEL" \
+      || die "native exit key $key was not delivered to task $ID on $BACKEND; nothing was typed"
+  done <<< "$keys"
+  state=$(wait_agent_state "$EXIT_WAIT" dead) \
+    || die "exit-delivered $ID native-exit=delivered agent-state=$state exit=unconfirmed; the agent did not stop within ${EXIT_WAIT}s; nothing was typed"
+  retire_busy_incarnation
+  printf 'stopped'
+}
+
 # rendered_matches <ere>: whether any row of the visible viewport matches.
 # An unreadable viewport is a no, so every caller treats it as missing proof.
 rendered_matches() {  # <ere>
@@ -649,7 +672,8 @@ do_exit() {
   # rather than a function that subshell sourced.
   if [ -s "${FM_COMPOSER_DIALOG_SINK:-}" ]; then
     dialog=$(cat "$FM_COMPOSER_DIALOG_SINK")
-    refuse_blocking_prompt "$dialog"
+    exit_blocking_dialog "$dialog"
+    return
   fi
   case "$composer_state" in
     empty) ;;
