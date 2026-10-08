@@ -1,0 +1,47 @@
+# Herdr client=0.9.3 server=0.9.3
+v1
+task=quota
+phase=complete
+ts=2026-10-08T12:32:19Z
+backend=herdr
+endpoint=fm-lab-grok-quota-7320-27202:w1:p1
+worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/project
+kind=scout
+from_harness=grok
+from_model=default
+from_effort=default
+to_harness=codex
+to_model=default
+to_effort=default
+worktree_head=becc55d2e3b926b34c3d49ea67694278e9d56da3
+worktree_dirty=yes
+note_file=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/home/state/quota.control-relaunch.note
+exit_result=stopped
+ok - grok 1.0.46 (2765805b9442) on herdr: ●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+relaunched quota harness=codex from=grok model=default effort=default backend=herdr endpoint=fm-lab-grok-quota-7320-27202:w1:p1 worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/project; Grok exit=0; wall_s=9.964; endpoint and work preserved
+v1
+task=quota
+phase=complete
+ts=2026-10-08T12:32:40Z
+backend=tmux
+endpoint=quota:fm-quota
+worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/project
+kind=scout
+from_harness=grok
+from_model=default
+from_effort=default
+to_harness=codex
+to_model=default
+to_effort=default
+worktree_head=becc55d2e3b926b34c3d49ea67694278e9d56da3
+worktree_dirty=yes
+note_file=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/home/state/quota.control-relaunch.note
+exit_result=stopped
+ok - grok 1.0.46 (2765805b9442) on tmux: WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+relaunched quota harness=codex from=grok model=default effort=default backend=tmux endpoint=quota:fm-quota worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.RozbFI/project; Grok exit=0; wall_s=4.026; endpoint and work preserved

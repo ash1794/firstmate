@@ -1,0 +1,2 @@
+# Herdr client=0.9.3 server=0.9.3
+ordinary draft refusal: rc=1 error: task quota's composer state is 'pending-unproven', not proven empty; refusing to type the /exit exit command because it could concatenate onto existing text. Clear the composer, then retry 'exit'; real agent remains alive and draft preserved

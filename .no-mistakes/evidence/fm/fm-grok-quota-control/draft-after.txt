@@ -1,0 +1,40 @@
+
+  master ~/.n/w/0/0/.t/fm-grok-quota-live.e3RO0x/project                                                   1.3K / 256K
+
+     ◆ session_start hook (global/settings) failed, ignored: command not found: /Users/ash1794/.claude/gh-axi
+
+     ◆ session_start hook (global/settings) failed, ignored: command not found: /Users/ash1794/.claude/chrome-
+     devtools-axi
+
+     ◆ session_start hook (global/settings) failed, ignored: command not found: /Users/ash1794/.claude/lavish-axi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Help improve Grok                                                                                 [Opt out] [Opt in]
+  Off by default. Opt-in to allow SpaceXAI to retain coding data, e.g., prompts, traces, & metrics,
+  for training and debugging purposes. Change anytime via settings.
+  Read Terms and Privacy Policy.
+
+  ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+  │ ❯ PRESERVE_UNSENT_DRAFT                                                                                          │
+  ╰─────────────────────────────────────────────────────────────────── Weekly limit left: 0% · Grok 4.7 Fast (high) ─╯
+
+  Enter:send  │  Opt+Enter:newline  │  Shift+Tab:mode  │  Ctrl+x:shortcuts
+

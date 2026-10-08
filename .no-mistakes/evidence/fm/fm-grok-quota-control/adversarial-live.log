@@ -1,0 +1,5 @@
+# Herdr client=0.9.3 server=0.9.3
+wrong-harness refusal on herdr: rc=1 error: task quota's endpoint reads 'unreadable' rather than a positively classified state; refusing to send a lifecycle command into an unattributed endpoint
+ok - grok 1.0.46 (2765805b9442) on herdr: stopped quota harness=grok backend=herdr endpoint=fm-lab-grok-quota-29392-24556:w1:p1 worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.P4cMcN/project; Grok exit=0; wall_s=2.807; endpoint and work preserved
+wrong-harness refusal on tmux: rc=1 error: task quota is blocked on a prompt: Grok weekly-limit picker. Refusing to type Enter into it.
+ok - grok 1.0.46 (2765805b9442) on tmux: stopped quota harness=grok backend=tmux endpoint=quota:fm-quota worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4DPJYY7YP3W4RMCCXVWSQGC/.test-tmp/fm-grok-quota-live.P4cMcN/project; Grok exit=0; wall_s=2.297; endpoint and work preserved
