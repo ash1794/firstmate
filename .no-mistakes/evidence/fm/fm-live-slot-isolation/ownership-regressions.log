@@ -1,0 +1,11 @@
+ok - direct: owner commit, branch and metadata survive before launch
+ok - alias: owner commit, branch and metadata survive before launch
+ok - ancestor: owner commit, branch and metadata survive before launch
+ok - duplicate: owner commit, branch and metadata survive before launch
+ok - native state-only reservation preserves retained records and permits a free copy
+ok - inventory failure refuses before allocation or launch
+ok - lease failure refuses before allocation or launch
+ok - an orphan foreign claim refuses reassignment without erasing ownership
+ok - an existing native lease remains unchanged
+ok - an orphan claim reserves its native slot before get without changing ownership
+ok - registered local home ownership is checked without endpoint inventory

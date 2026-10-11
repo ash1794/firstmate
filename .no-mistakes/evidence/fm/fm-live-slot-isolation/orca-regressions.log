@@ -1,0 +1,4 @@
+ok - an Orca-backed fresh spawn enters the worktree Orca created for it, instead of hard-refusing on the post-launch proof
+ok - a relaunch against an Orca-backed task is refused before the RELAUNCH+orca worktree carve-out could run
+# all fm-spawn-orca-worktree tests passed
+ok - an Orca collision refuses before terminal creation and preserves the returned worktree on abort

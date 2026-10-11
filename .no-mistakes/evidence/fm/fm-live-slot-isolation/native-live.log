@@ -1,0 +1,203 @@
+lab=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q session=fm-lab-fm-live-slot-iso-2947-11151
+{"client":{"version":"0.9.3","channel":"stable","protocol":22,"endpoint_protocol_generation":1,"endpoint_capabilities":["surface_interest","presentation_effects_fence","health_check"],"remote_host_bridge":true,"remote_bridge_idle_timeout":true,"binary":"/Users/ash1794/.local/bin/herdr","session":"fm-lab-fm-live-slot-iso-2947-11151"},"server":{"status":"running","running":true,"version":"0.9.3","protocol":22,"capabilities":{"live_handoff":true,"detached_server_daemon":false,"endpoint_protocol_generation":1,"surface_interest":true,"health_check":true,"ssh_agent_registration":true},"compatible":true,"endpoint_compatible":true,"socket":"/Users/ash1794/.config/herdr/sessions/fm-lab-fm-live-slot-iso-2947-11151/herdr.sock","session":"fm-lab-fm-live-slot-iso-2947-11151","restart_needed":false,"server_binary_stale":false},"update":{"restart_needed":false,"server_binary_stale":false}}
+warning: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/data/lab-owner/launch-brief.md records no ship branch; defaulting to legacy branch fm/lab-owner
+warning: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/data/lab-owner/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+spawned lab-owner harness=codex kind=ship mode=no-mistakes yolo=off window=fm-lab-fm-live-slot-iso-2947-11151:w1:p2 worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project
+owner=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project sha=80bd6024e23ea49aa86e259c82d844a52f63efd4
+treehouse get
+ash1794@Apple-Squared project % treehouse get
+🌳 Setting up worktree...
+🌳 Entered worktree at ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/p
+ool-root/.treehouse/project-6670a4/1/project. Type 'exit' to return.
+ash1794@Apple-Squared project % cd -- '/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.te
+st-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project'
+ash1794@Apple-Squared project % export GOTMPDIR=/tmp/fm-lab-owner/gotmp
+ash1794@Apple-Squared project % export COMPACT_ADVISER_DISABLE=1
+ash1794@Apple-Squared project % export FM_TASK_ID=lab-owner
+ash1794@Apple-Squared project % . '/tmp/fm-lab-owner+8f9c821fd26a2ca6db5ddd5c52320f756fbfeb823bab8085abfb4dbe87b381dc/la
+unch.s1791691087.3532.105.sh'
+{"id":"cli:pane:wait-output","result":{"matched_line":"• 63 LAB","pane_id":"w1:p2","read":{"format":"text","pane_id":"w1:p2","revision":0,"source":"recent_unwrapped","tab_id":"w1:t2","text":"  `CONTRIBUTING.md` and `firstmate-coding-guidelines` for Firstmate changes.\n  If the `firstmate-coding-guidelines` skill name does not resolve in this session, read `/Users/ash1794/.no-mistakes/\n  worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.agents/skills/firstmate-coding-guidelines/SKILL.md` instead.\n\n  # Task\n  ## Captain's intent\n  Verify isolated worker launch in a disposable lab.\n\n  ## Firstmate spec\n  Do not change files or branches. Calculate 7 * 9 and reply with the result followed by LAB. Remain available.\n\n  # Current no-mistakes intent contract\n  This section supersedes every earlier brief instruction about constructing `--intent`, but not later clarifications\n  actually supplied by the captain.\n  Use everything under `## Captain intent authorized for --intent` through the end of this brief, including any nested\n  subheadings but excluding that heading, plus any later words the captain actually supplied as `--intent`; never\n  include Firstmate specification or other mixed Task content.\n  Preserve those words without adding speaker labels or direct address.\n  Firstmate-authored constraints, acceptance criteria, implementation details, decisions, and tradeoffs are\n  specification, not captain intent.\n  The Definition of done's rule that `--intent` must be self-sufficient still governs the string you pass: resolve any\n  report, decision, or PR the intent below refers to into its substance rather than passing the pointer.\n\n  ## Captain intent authorized for --intent\n  Verify isolated worker launch in a disposable lab.\n\n\n• I’ll check the task inbox and calculate the result without changing files or branches.\n\n• Ran if [ -f '/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8…\n  └ (no output)\n    + Show details\n\n• 63 LAB\n\n\n› Ask Codex to do anything\n\n  GPT-6.1-Sol low · ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/poo…\n  ? for shortcuts                                                                              ⚠ 1 warning · f2 to view","truncated":false,"workspace_id":"w1"},"revision":0,"type":"output_matched"}}
+  worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.agents/skills/firstmate-coding-guidelines/SKILL.md` instead.
+
+  # Task
+  ## Captain's intent
+  Verify isolated worker launch in a disposable lab.
+
+  ## Firstmate spec
+  Do not change files or branches. Calculate 7 * 9 and reply with the result followed by LAB. Remain available.
+
+  # Current no-mistakes intent contract
+  This section supersedes every earlier brief instruction about constructing `--intent`, but not later clarifications
+  actually supplied by the captain.
+  Use everything under `## Captain intent authorized for --intent` through the end of this brief, including any nested
+  subheadings but excluding that heading, plus any later words the captain actually supplied as `--intent`; never
+  include Firstmate specification or other mixed Task content.
+  Preserve those words without adding speaker labels or direct address.
+  Firstmate-authored constraints, acceptance criteria, implementation details, decisions, and tradeoffs are
+  specification, not captain intent.
+  The Definition of done's rule that `--intent` must be self-sufficient still governs the string you pass: resolve any
+  report, decision, or PR the intent below refers to into its substance rather than passing the pointer.
+
+  ## Captain intent authorized for --intent
+  Verify isolated worker launch in a disposable lab.
+
+
+• I’ll check the task inbox and calculate the result without changing files or branches.
+
+• Ran if [ -f '/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8…
+  └ (no output)
+    + Show details
+
+• 63 LAB
+
+  Worked for 10s • 9:28 AM
+
+
+› Ask Codex to do anything
+
+  GPT-6.1-Sol low · ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/poo…
+  ? for shortcuts                                                                              ⚠ 1 warning · f2 to view
+🌳 Leased worktree 1 at ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project. Run 'treehouse return ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project' to release it.
+warning: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/data/lab-newcomer/launch-brief.md records no ship branch; defaulting to legacy branch fm/lab-newcomer
+warning: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/data/lab-newcomer/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+spawned lab-newcomer harness=codex kind=ship mode=no-mistakes yolo=off window=fm-lab-fm-live-slot-iso-2947-11151:w1:p3 worktree=/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/2/project
+[{"name":"1","path":"/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/1/project","status":"leased","branch":"","detached":true,"flavor":"git","lease_id":"135be2bda7a8cc6e162934a2bcad5575","lease_holder":"firstmate:/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.meta","leased_at":"2026-10-11T09:28:27.93437+05:30","processes":[{"pid":6100,"name":"zsh"},{"pid":10947,"name":"codex"},{"pid":11543,"name":"node_repl"},{"pid":11547,"name":"node"},{"pid":11902,"name":"node"},{"pid":15783,"name":"codex-code-mode-host"}]},{"name":"2","path":"/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/pool-root/.treehouse/project-6670a4/2/project","status":"in-use","branch":"","detached":true,"flavor":"git","lease_id":"","lease_holder":"","leased_at":null,"processes":[{"pid":17713,"name":"zsh"},{"pid":20316,"name":"codex"}]}]
+  worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.agents/skills/firstmate-coding-guidelines/SKILL.md` instead.
+
+  # Task
+  ## Captain's intent
+  Verify isolated worker launch in a disposable lab.
+
+  ## Firstmate spec
+  Do not change files or branches. Calculate 7 * 9 and reply with the result followed by LAB. Remain available.
+
+  # Current no-mistakes intent contract
+  This section supersedes every earlier brief instruction about constructing `--intent`, but not later clarifications
+  actually supplied by the captain.
+  Use everything under `## Captain intent authorized for --intent` through the end of this brief, including any nested
+  subheadings but excluding that heading, plus any later words the captain actually supplied as `--intent`; never
+  include Firstmate specification or other mixed Task content.
+  Preserve those words without adding speaker labels or direct address.
+  Firstmate-authored constraints, acceptance criteria, implementation details, decisions, and tradeoffs are
+  specification, not captain intent.
+  The Definition of done's rule that `--intent` must be self-sufficient still governs the string you pass: resolve any
+  report, decision, or PR the intent below refers to into its substance rather than passing the pointer.
+
+  ## Captain intent authorized for --intent
+  Verify isolated worker launch in a disposable lab.
+
+
+• I’ll check the task inbox and calculate the result without changing files or branches.
+
+• Ran if [ -f '/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8…
+  └ (no output)
+    + Show details
+
+• 63 LAB
+
+  Worked for 10s • 9:28 AM
+
+
+› Ask Codex to do anything
+
+  GPT-6.1-Sol low · ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/poo…
+  ? for shortcuts                                                                              ⚠ 1 warning · f2 to view
+PASS: real Herdr/Codex spawns used distinct worktrees; owner HEAD and metadata unchanged
+
+  >_ OpenAI Codex (v0.162.1)
+     ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/…/1/project
+  permissions: YOLO mode
+
+
+› FIRSTMATE_OP: v1 launch-brief: # Current worker role contract
+  You are a crewmate: an autonomous worker agent managed by firstmate.
+  This section establishes your current identity before every project or task instruction below and supersedes any
+  conflicting role identity in those instructions.
+  Do the assigned work yourself and report only to firstmate; do not adopt a firstmate or secondmate supervisor
+  identity, delegate the task, run fleet supervision, or address the captain.
+  Your steering inbox is `/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-
+  slot-live.O8lR1Q/state/lab-owner.inbox`; this exact path belongs to your current task even when it is outside the
+  worktree or under the supervising firstmate home, so read and acknowledge its messages and do not reject it as
+  another home's state.
+  Never inspect or change any other home's endpoint namespace; this authorization is limited to the exact task paths
+  named by this brief.
+  When this task works on Firstmate itself, the repository root `AGENTS.md` (also imported by `CLAUDE.md`) is project
+  content and the supervisor contract for the firstmate managing you: follow this brief instead of that supervisor
+  contract.
+  Project instructions still govern the work wherever they do not conflict with this worker identity, including
+  `CONTRIBUTING.md` and `firstmate-coding-guidelines` for Firstmate changes.
+  If the `firstmate-coding-guidelines` skill name does not resolve in this session, read `/Users/ash1794/.no-mistakes/
+  worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.agents/skills/firstmate-coding-guidelines/SKILL.md` instead.
+
+  # Task
+  ## Captain's intent
+  Verify isolated worker launch in a disposable lab.
+
+  ## Firstmate spec
+  Do not change files or branches. Calculate 7 * 9 and reply with the result followed by LAB. Remain available.
+
+  # Current no-mistakes intent contract
+  This section supersedes every earlier brief instruction about constructing `--intent`, but not later clarifications
+  actually supplied by the captain.
+  Use everything under `## Captain intent authorized for --intent` through the end of this brief, including any nested
+  subheadings but excluding that heading, plus any later words the captain actually supplied as `--intent`; never
+  include Firstmate specification or other mixed Task content.
+  Preserve those words without adding speaker labels or direct address.
+  Firstmate-authored constraints, acceptance criteria, implementation details, decisions, and tradeoffs are
+  specification, not captain intent.
+  The Definition of done's rule that `--intent` must be self-sufficient still governs the string you pass: resolve any
+  report, decision, or PR the intent below refers to into its substance rather than passing the pointer.
+
+  ## Captain intent authorized for --intent
+  Verify isolated worker launch in a disposable lab.
+
+
+• I’ll check the task inbox and calculate the result without changing files or branches.
+
+• Ran if [ -f '/Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8…
+  └ (no output)
+    + Show details
+
+• 63 LAB
+
+  Worked for 10s • 9:28 AM
+
+
+› Ask Codex to do anything
+
+  GPT-6.1-Sol low · ~/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/poo…
+  ? for shortcuts                                                                              ⚠ 1 warning · f2 to view
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-rebase: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-applypatch: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-auto-gc: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-merge-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/post-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/sendemail-validate: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/applypatch-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/prepare-commit-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/post-checkout: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/post-applypatch: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/post-rewrite: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/commit-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-push: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/post-merge: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks/pre-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-owner.git-hooks: Directory not empty
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-rebase: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-applypatch: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-auto-gc: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-merge-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/post-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/sendemail-validate: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/applypatch-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/prepare-commit-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/post-checkout: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/post-applypatch: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/post-rewrite: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/commit-msg: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-push: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/post-merge: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks/pre-commit: Permission denied
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state/lab-newcomer.git-hooks: Directory not empty
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q/state: Directory not empty
+rm: /Users/ash1794/.no-mistakes/worktrees/0ad5de5a283c/01M4MHKA8W8ZNKNBPPNGJPQ0G6/.test-labs/fm-slot-live.O8lR1Q: Directory not empty
