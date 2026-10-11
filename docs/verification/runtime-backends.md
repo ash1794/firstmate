@@ -6,6 +6,28 @@ This record contains reusable version-scoped evidence for active runtime guarant
 The backend guides own current setup, safety boundaries, and limitations.
 Exact task chronology, branch names, temporary homes, local paths, process ids, thread ids, and delivery transcripts remain in private reports or PR evidence.
 
+## Recorded worktree ownership at spawn
+
+`bin/fm-spawn.sh` owns the allocation invariant and `bin/fm-teardown.sh` owns release. The executable regression covers recorded owners, canonical path aliases, retained records, ambiguous metadata, native reservation failures and orphan claims. It also verifies that an Orca provider returning an owned copy cannot trigger terminal creation or abort cleanup of that copy:
+
+```sh
+bin/fm-test-run.sh tests/fm-spawn-worktree-ownership.test.sh tests/fm-spawn-orca-worktree.test.sh
+```
+
+Verified on 2026-10-11 with Treehouse 3.1.2, Herdr 0.9.3 (protocol 22) and Codex 0.162.1 using gpt-6.1-sol. The credentialed opt-in test provisions a private native pool and a helper-owned named Herdr session. A real model response proves the first worker is active before the second spawn. Its success output is:
+
+```text
+PASS: real Herdr/Codex spawns used distinct worktrees; owner HEAD and metadata unchanged
+```
+
+Refresh with normal Codex credentials available:
+
+```sh
+FM_WORKTREE_OWNERSHIP_LIVE=1 bin/fm-test-run.sh tests/fm-spawn-worktree-ownership-live-e2e.test.sh
+```
+
+The helper verifies the running default session is unchanged after teardown. This evidence covers Codex on Herdr; other harnesses and session providers share the metadata guard but are not newly credentialed by this test. Live output can time out independently of the portable ownership assertions, and that failure must remain visible.
+
 ## Harness detection precedence
 
 Firstmate's own harness comes from two kinds of evidence, and `bin/fm-harness.sh` owns how they combine: an environment marker names its harness, and the nearest harness process in the parent chain proves who owns the process tree.

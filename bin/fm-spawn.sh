@@ -157,18 +157,22 @@
 #   even when they select different backends. A fresh spawn first takes the
 #   per-home task-set lock and refuses rather than waits when forced teardown owns
 #   it; relaunch is exempt because the existing task's control lock covers it.
-#   A fresh Treehouse-backed spawn also takes the project-identity lock in the local
-#   root Firstmate home's state directory before slot allocation and holds it through
-#   task metadata publication. Teardown holds that same lock while proving and
-#   returning a slot, so allocation cannot reuse a slot before its owner record
-#   is published. Under that same lock it writes the slot's owner claim, which is
-#   what lets teardown leave a slot reassigned since untouched; bin/fm-wake-lib.sh
-#   owns the claim and bin/fm-teardown.sh owns what it protects. A slot that
-#   cannot be claimed refuses the spawn rather than launching a worker whose slot
-#   could later be released out from under its successor. A spawn that aborts
-#   while it still holds the allocation lock drops its own claim; an abort after
-#   metadata publication has released that lock leaves the claim in place, and
-#   the next spawn's claim replaces it.
+#   A fresh ship/scout spawn also takes the project-identity lock in the local
+#   root Firstmate home before allocation, including Orca, through metadata
+#   publication. Treehouse spawns first reserve each recorded pool copy using
+#   native state-only `treehouse lease`, so interactive get cannot reset a live,
+#   dead, unknown, or intentionally retained owner's copy. Existing durable
+#   leases are left unchanged; an unreadable inventory or failed lease refuses
+#   before allocation. Teardown remains the sole landed-work/release authority.
+#   Every provider's selected copy and every relaunch are then checked against
+#   canonical worktree/home paths in the root and registered local homes before
+#   claim, refresh, hooks or launch. Another record, ambiguous metadata, or a
+#   foreign/unsafe slot claim refuses rather than silently reassigning it.
+#   An Orca collision also suppresses abort deletion of the returned copy.
+#   Under the allocation lock, Treehouse spawns write the existing slot claim
+#   owned by bin/fm-wake-lib.sh; teardown holds the same lock while proving and
+#   returning a slot. An abort before metadata publication drops only its own
+#   claim; a native reservation of an existing recorded owner is never undone.
 #   The local root is whatever bin/fm-wake-lib.sh's
 #   fm_firstmate_root_home resolves, so a home seeded from another machine anchors
 #   that lock itself rather than failing to resolve one;
@@ -3050,7 +3054,136 @@ else
   WT=""
   BRIEF="$DATA/$ID/brief.md"
 fi
-if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ] && [ "$BACKEND" != orca ]; then
+# Read ownership paths strictly: duplicate fields must not hide an earlier owner.
+spawn_record_path() { # <meta> <field>
+  local meta=$1 field=$2 count
+  count=$(grep -c "^$field=" "$meta" || true)
+  [ "$count" != 0 ] || return 0
+  fm_backend_meta_exact_value "$meta" "$field" || {
+    echo "error: ambiguous $field ownership in $meta; refusing allocation or launch" >&2
+    return 1
+  }
+}
+
+spawn_treehouse_inventory_row() { # <json> <canonical-path>
+  local inventory=$1 wanted=$2 row path found=
+  printf '%s' "$inventory" | jq -e 'type == "array" and all(.[]; (.name | type == "string") and (.path | type == "string") and (.status | type == "string"))' >/dev/null || {
+    echo "error: unreadable Treehouse ownership inventory; refusing allocation" >&2
+    return 1
+  }
+  while IFS= read -r row; do
+    path=$(printf '%s' "$row" | jq -r '.path')
+    path=$(CDPATH='' cd -- "$path" 2>/dev/null && pwd -P) || return 1
+    [ "$path" = "$wanted" ] || continue
+    [ -z "$found" ] || return 1
+    found=$row
+  done < <(printf '%s' "$inventory" | jq -c '.[]')
+  printf '%s' "$found"
+}
+
+# A recorded copy remains owned until teardown releases it, even when its
+# endpoint is dead, unknown, or a landed record is intentionally retained.
+# Native leases protect these copies BEFORE interactive get can reset one.
+# Do not invent a second landed-work test or infer release from a status tail.
+spawn_reserve_pool_copy() { # <path> <ownership-evidence>
+  local path=$1 evidence=$2 real row name leased
+  [ -n "$path" ] && [ -d "$path" ] || return 0
+  git -C "$path" rev-parse --git-common-dir >/dev/null 2>&1 || return 0
+  real=$(CDPATH='' cd -- "$path" && pwd -P) || return 1
+  if [ -z "$SPAWN_POOL_INVENTORY" ]; then
+    SPAWN_POOL_INVENTORY=$(cd "$PROJ_ABS" && treehouse status --json) || return 1
+  fi
+  # Native inventory owns membership, including configurable pool layouts.
+  row=$(spawn_treehouse_inventory_row "$SPAWN_POOL_INVENTORY" "$real") || return 1
+  [ -n "$row" ] || return 0
+  [ "$(printf '%s' "$row" | jq -r '.status')" != leased ] || return 0
+  name=$(printf '%s' "$row" | jq -r '.name')
+  leased=$(cd "$PROJ_ABS" && treehouse lease "$name" --lease-holder "firstmate:$evidence") || {
+    echo "error: could not reserve recorded worktree $real ($evidence); refusing allocation" >&2
+    return 1
+  }
+  [ "$(CDPATH='' cd -- "$leased" 2>/dev/null && pwd -P)" = "$real" ] || {
+    echo "error: Treehouse leased an unexpected worktree; refusing allocation" >&2
+    return 1
+  }
+  # Refresh so another alias never tries to overwrite an existing lease holder.
+  SPAWN_POOL_INVENTORY=$(cd "$PROJ_ABS" && treehouse status --json) || return 1
+  row=$(spawn_treehouse_inventory_row "$SPAWN_POOL_INVENTORY" "$real") || return 1
+  [ -n "$row" ] && [ "$(printf '%s' "$row" | jq -r '.status')" = leased ]
+}
+
+spawn_reserve_recorded_worktrees() {
+  local state_dir meta field path marker line worktrees
+  SPAWN_POOL_INVENTORY=
+  fm_treehouse_collect_owner_states "$STATE" || return 1
+  for state_dir in "${TREEHOUSE_OWNER_STATES[@]}"; do
+    for meta in "$state_dir"/*.meta; do
+      [ -e "$meta" ] || [ -L "$meta" ] || continue
+      [ -f "$meta" ] && [ ! -L "$meta" ] || {
+        echo "error: unsafe ownership metadata $meta; refusing allocation" >&2
+        return 1
+      }
+      for field in worktree home; do
+        path=$(spawn_record_path "$meta" "$field") || return 1
+        spawn_reserve_pool_copy "$path" "$meta" || return 1
+      done
+    done
+  done
+  # An interrupted publication or an unavailable home can leave only a slot
+  # claim. Protect it before get too: unknown ownership never means reusable.
+  # Git's inventory is read-only; native Treehouse inventory above determines
+  # which of these paths this allocator can actually hand out.
+  worktrees=$(git -C "$PROJ_ABS" worktree list --porcelain) || return 1
+  while IFS= read -r line; do
+    case "$line" in
+      'worktree '*)
+        path=${line#worktree }
+        marker=$(fm_treehouse_slot_owner_marker "$path" 2>/dev/null) || continue
+        [ -e "$marker" ] || [ -L "$marker" ] || continue
+        spawn_reserve_pool_copy "$path" "$marker" || return 1
+        ;;
+    esac
+  done <<< "$worktrees"
+}
+
+# Backstop for every provider and relaunch, before claim/refresh/hooks/launch.
+# Metadata, rather than endpoint liveness, owns the copy. Unknown never means
+# free. Teardown is the existing safe way to release dead or landed ownership.
+spawn_require_exclusive_worktree() {
+  local state_dir meta field path real candidate
+  candidate=$(CDPATH='' cd -- "$WT" && pwd -P) || return 1
+  fm_treehouse_collect_owner_states "$STATE" || return 1
+  for state_dir in "${TREEHOUSE_OWNER_STATES[@]}"; do
+    for meta in "$state_dir"/*.meta; do
+      [ -e "$meta" ] || [ -L "$meta" ] || continue
+      [ -f "$meta" ] && [ ! -L "$meta" ] || return 1
+      [ "${meta##*/}" = "$ID.meta" ] && [ "$meta" -ef "$STATE/$ID.meta" ] && continue
+      for field in worktree home; do
+        path=$(spawn_record_path "$meta" "$field") || return 1
+        [ -n "$path" ] && [ -d "$path" ] || continue
+        real=$(CDPATH='' cd -- "$path" && pwd -P) || return 1
+        case "$candidate/|$real/" in
+          "$real/"*|*"|$candidate/"*)
+            echo "error: worktree $candidate is still recorded to ${meta##*/} ($field=$path); refusing to claim, refresh or launch; reconcile ownership through teardown or recover that task" >&2
+            return 1
+            ;;
+        esac
+      done
+    done
+  done
+  if fm_treehouse_pool_slot "$PROJ_ABS" "$WT"; then
+    fm_treehouse_slot_owner_state "$WT" "$ID"
+    case "$FM_TREEHOUSE_SLOT_OWNER:$RELAUNCH" in
+      absent:*|mine:1) ;;
+      *)
+        echo "error: worktree $candidate has unresolved slot ownership ($FM_TREEHOUSE_SLOT_OWNER ${FM_TREEHOUSE_SLOT_OWNER_ID:-unknown}); refusing to reassign it" >&2
+        return 1
+        ;;
+    esac
+  fi
+}
+
+if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ]; then
   SPAWN_TREEHOUSE_PROJECT_LOCK=$(fm_treehouse_project_lock_path "$PROJ_ABS") || {
     echo "error: could not resolve the shared Treehouse project lock for $PROJ_ABS" >&2
     exit 1
@@ -3060,6 +3193,7 @@ if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ] && [ "$BACKEND" != orca ];
     exit 1
   fi
   SPAWN_TREEHOUSE_PROJECT_LOCK_HELD=1
+  [ "$BACKEND" = orca ] || spawn_reserve_recorded_worktrees || exit 1
 fi
 [ -f "$BRIEF" ] || {
   echo "error: task $ID has no brief at inaccessible data path $BRIEF" >&2
@@ -3890,7 +4024,15 @@ EOF
       echo "error: orca did not return a worktree id/path for $W" >&2
       exit 1
     fi
+    # Do not let an invalid or colliding provider result authorize deletion.
+    ORCA_ABORT_CLEANUP=0
     validate_spawn_worktree "orca worktree create" "$W"
+    if ! spawn_require_exclusive_worktree; then
+      # A provider returning an owned copy must not have that copy deleted by
+      # abort cleanup, even when its worktree id was reported as newly created.
+      exit 1
+    fi
+    ORCA_ABORT_CLEANUP=1
     if [ -z "$ORCA_TERMINAL" ]; then
       ORCA_TERMINAL=$(fm_backend_orca_terminal_create "$ORCA_WORKTREE_ID" "$W") || exit 1
     fi
@@ -4367,19 +4509,10 @@ elif [ "$KIND" != secondmate ] && [ "$BACKEND" != orca ]; then
   fi
 
   validate_spawn_worktree "treehouse get" "$T"
+  spawn_require_exclusive_worktree || exit 1
 
-  # Claim the pool slot for this task. The interactive `treehouse get` sent to
-  # the pane above records only a process lease (Treehouse's durable
-  # `get --lease --lease-holder`, which bin/fm-home-seed.sh uses for secondmate
-  # homes, is not this path), so Treehouse cannot say which task a slot belongs
-  # to once that task's worker exits - and that is exactly when the slot is
-  # handed on and this task's worktree= line goes stale. The claim is what lets
-  # bin/fm-teardown.sh leave a slot that has since been reassigned untouched, so
-  # a slot that cannot be claimed is refused here, at the cheapest point, rather
-  # than launching a worker whose slot teardown could later release out from
-  # under its successor.
-  # Written under the Treehouse project lock held from before slot allocation
-  # through metadata publication, so no other spawn or return sees a half-claim.
+  # Publish the existing slot claim only after the ownership backstop above.
+  # bin/fm-wake-lib.sh owns its format and bin/fm-teardown.sh its release.
   if fm_treehouse_pool_slot "$PROJ_ABS" "$WT"; then
     if ! fm_treehouse_slot_owner_claim "$WT" "$ID" "$FM_HOME"; then
       echo "error: could not claim Treehouse pool slot $WT for task $ID; refusing to launch a worker whose slot cannot later be proved to be its own; inspect window $T" >&2
@@ -4387,6 +4520,9 @@ elif [ "$KIND" != secondmate ] && [ "$BACKEND" != orca ]; then
     fi
     SPAWN_SLOT_CLAIMED=1
   fi
+fi
+if [ "$RELAUNCH" -eq 1 ] && [ "$KIND" != secondmate ]; then
+  spawn_require_exclusive_worktree || exit 1
 fi
 if [ "$RELAUNCH" -eq 0 ] && [ "$KIND" != secondmate ]; then
   freshen_spawn_worktree_base "$WT" "$BASE_BRANCH" || exit 1

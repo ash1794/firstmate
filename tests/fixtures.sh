@@ -299,7 +299,16 @@ fm_test_make_spawn_fakebin() {
   shift
   fakebin=$(fm_fakebin "$dir")
   fm_test_fake_tmux_spawn "$fakebin"
-  fm_fake_exit0 "$fakebin" treehouse "$@"
+  fm_fake_exit0 "$fakebin" "$@"
+  cat > "$fakebin/treehouse" <<'SH'
+#!/usr/bin/env bash
+# This fixture has ordinary Git worktrees, no native Treehouse pool members.
+if [ "${1:-}" = status ] && [ "${2:-}" = --json ]; then
+  printf '[]\n'
+fi
+exit 0
+SH
+  chmod +x "$fakebin/treehouse"
   printf '%s\n' "$fakebin"
 }
 

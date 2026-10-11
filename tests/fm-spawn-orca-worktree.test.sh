@@ -41,6 +41,7 @@ make_orca_fakebin() {
 #!/usr/bin/env bash
 set -u
 DIR="${FM_TEST_ORCA_DIR:?}"
+[ -z "${FM_TEST_ORCA_LOG:-}" ] || printf '%s\n' "$*" >> "$FM_TEST_ORCA_LOG"
 case "$1 $2" in
   "status --json")
     printf '{"ok":true,"result":{"runtime":{"reachable":true,"state":"ready"}}}\n'
@@ -62,7 +63,11 @@ case "$1 $2" in
     done
     wt="$DIR/orca-worktrees/$name"
     mkdir -p "$DIR/orca-worktrees"
-    git -C "$DIR/project" worktree add --quiet -b "orca-$name" "$wt" >&2 || exit 1
+    if [ "${FM_TEST_ORCA_REUSE:-0}" = 1 ]; then
+      wt="$DIR/reused"
+    else
+      git -C "$DIR/project" worktree add --quiet -b "orca-$name" "$wt" >&2 || exit 1
+    fi
     printf '{"ok":true,"result":{"worktree":{"id":"wt-%s","path":"%s"}}}\n' "$name" "$wt"
     exit 0
     ;;
@@ -168,3 +173,32 @@ test_orca_fresh_spawn_enters_the_worktree_it_created
 test_orca_relaunch_is_refused_before_the_worktree_carveout_could_run
 
 echo "# all fm-spawn-orca-worktree tests passed"
+
+# A provider that reports an already-owned path must not get its returned id
+# deleted by spawn's normal abort cleanup.
+test_orca_collision_preserves_existing_worktree() {
+  local dir="$TMP_ROOT/collision" home id=orca-collision out rc fb before
+  home="$dir/home"
+  fm_test_spawn_home "$home" codex
+  printf 'manual\n' > "$home/config/backlog-backend"
+  fm_test_spawn_brief "$home" "$id"
+  fm_git_worktree "$dir/project" "$dir/reused" owned
+  printf 'worktree=%s\nproject=%s\nwindow=some-session:fm-owner\nkind=ship\n' \
+    "$dir/reused" "$dir/project" > "$home/state/owner.meta"
+  before=$(git -C "$dir/reused" rev-parse HEAD)
+  fb=$(make_orca_fakebin "$dir")
+  out=$(FM_ROOT_OVERRIDE='' FM_HOME="$home" HOME="$dir/user-home" \
+    FM_SPAWN_NO_GUARD=1 FM_TEST_ORCA_DIR="$dir" FM_TEST_ORCA_REUSE=1 \
+    FM_TEST_ORCA_LOG="$dir/runtime.log" PATH="$fb:$PATH" \
+    "$SPAWN" "$id" "$dir/project" --mode no-mistakes --yolo off --backend orca 2>&1)
+  rc=$?
+  [ "$rc" -ne 0 ] || fail "Orca collision was accepted"
+  assert_contains "$out" 'still recorded to owner.meta' 'Orca collision did not identify the owner'
+  assert_no_grep 'worktree remove' "$dir/runtime.log" 'Orca abort deleted the owned copy'
+  assert_no_grep 'terminal create' "$dir/runtime.log" 'Orca collision created a terminal'
+  [ ! -e "$home/state/$id.meta" ] || fail "Orca collision published metadata"
+  [ "$(git -C "$dir/reused" rev-parse HEAD)" = "$before" ] || fail "Orca collision changed owner HEAD"
+  pass "an Orca collision refuses before terminal creation and preserves the returned worktree on abort"
+}
+
+test_orca_collision_preserves_existing_worktree
