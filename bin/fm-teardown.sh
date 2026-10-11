@@ -141,7 +141,7 @@
 # Firstmate home's state directory, as resolved by bin/fm-wake-lib.sh's
 # fm_firstmate_root_home; a home seeded from another machine is its own local
 # root, since a lock on this filesystem cannot be held or observed across that
-# boundary. Fresh Treehouse spawns for that project in
+# boundary. Fresh ship/scout spawns for that project, including Orca, in
 # every local Firstmate home hold the same lock from before slot allocation
 # through metadata publication, closing the publication
 # gap; forced secondmate teardown takes it and runs the same checks for every

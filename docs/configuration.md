@@ -423,6 +423,7 @@ For spawn-capable adapters, the runtime session-provider backend controls where 
 | `cmux` | Experimental; no dedicated real-backend CI lane | [`docs/cmux-backend.md`](cmux-backend.md) |
 
 Treehouse remains the worktree provider for tmux, herdr, zellij, and cmux, since herdr, zellij, and cmux are session providers only; Orca provides both the task worktree and terminal endpoint.
+The [`fm-spawn.sh` header](../bin/fm-spawn.sh) owns recorded-worktree allocation and relaunch refusals and their recovery guidance; [`runtime-backends.md`](verification/runtime-backends.md#recorded-worktree-ownership-at-spawn) owns the regression evidence.
 
 ### Backend selection order
 
